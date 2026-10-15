@@ -2,12 +2,11 @@
 
 for Startup
 
-cd server
+cd BEnd
 npm install
 npm run dev
 
-Run `npm install` once to install dependencies. After that, start the server with
-`npm run dev`.
+
 
 cd client
 npm install

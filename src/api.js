@@ -1,6 +1,13 @@
-const BASE_URL = "/api";
+const configuredBaseUrl = import.meta.env.VITE_API_URL?.replace(/\/+$/, "");
+const BASE_URL = configuredBaseUrl || (import.meta.env.DEV ? "/api" : "");
 
 async function request(path, options = {}) {
+  if (!BASE_URL) {
+    throw new Error(
+      "API URL is not configured. Set VITE_API_URL to your deployed backend URL (including /api) in the hosting environment.",
+    );
+  }
+
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: { "Content-Type": "application/json" },
     ...options,
