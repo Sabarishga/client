@@ -5,7 +5,23 @@ async function request(path, options = {}) {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
-  const data = await res.json();
+  const contentType = res.headers.get("content-type") || "";
+  if (!contentType.includes("json")) {
+    throw new Error(
+      `API returned a non-JSON response (HTTP ${res.status}). Check that the backend is running and the API URL is correct.`,
+    );
+  }
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      throw new Error(`API returned invalid JSON (HTTP ${res.status}).`);
+    }
+    throw err;
+  }
+
   if (!res.ok) throw new Error(data.message || "Request failed");
   return data;
 }
