@@ -8,8 +8,8 @@ import ResetPasswordPage from "./components/ResetPasswordPage";
 import {
   subscribe,
   unsubscribe,
+  getPreferences,
   getNotifications,
-  clearNotifications,
 } from "./api";
 
 function App() {
@@ -20,8 +20,7 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [frequency, setFrequency] = useState("daily");
   const [notifications, setNotifications] = useState([]);
-  const [newsCategories, setNewsCategories] = useState([]);
-  const [newsRefreshKey, setNewsRefreshKey] = useState(0);
+  const [subscribed, setSubscribed] = useState(true);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -29,14 +28,39 @@ function App() {
     if (!email || pathname !== "/") return undefined;
 
     let active = true;
-    getNotifications(email)
-      .then((data) => {
-        if (active) setNotifications(data);
-      })
-      .catch((err) => {
-        if (active) {
-          setMessage(err.message);
+    setLoading(true);
+    Promise.allSettled([getPreferences(email), getNotifications(email)])
+      .then(([preferencesResult, notificationsResult]) => {
+        if (!active) return;
+
+        const errors = [];
+        if (preferencesResult.status === "fulfilled") {
+          const preferences = preferencesResult.value;
+          setCategories(preferences.categories || []);
+          setFrequency(preferences.frequency || "daily");
+          setSubscribed(Boolean(preferences.subscribed));
+        } else {
+          errors.push(
+            preferencesResult.reason instanceof Error
+              ? preferencesResult.reason.message
+              : "Unable to load alert preferences.",
+          );
         }
+
+        if (notificationsResult.status === "fulfilled") {
+          setNotifications(notificationsResult.value);
+        } else {
+          errors.push(
+            notificationsResult.reason instanceof Error
+              ? notificationsResult.reason.message
+              : "Unable to load alert history.",
+          );
+        }
+
+        if (errors.length) setMessage(errors.join(" "));
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
 
     return () => {
@@ -53,10 +77,13 @@ function App() {
     window.localStorage.removeItem("newsAlertEmail");
     setEmail("");
     setNotifications([]);
+    setCategories([]);
+    setFrequency("daily");
+    setSubscribed(false);
     window.location.assign("/login");
   };
 
-  const handleSubscribe = async (targetEmail) => {
+  const handleSavePreferences = async (targetEmail) => {
     if (categories.length === 0) {
       setMessage("Select at least one category before subscribing.");
       return;
@@ -66,13 +93,8 @@ function App() {
     setMessage("");
     try {
       await subscribe(targetEmail, categories, frequency);
-      setEmail(targetEmail);
-      setNewsCategories([...categories]);
-      setMessage(
-        "Subscribed! You will receive alerts based on your preferences.",
-      );
-      const data = await getNotifications(targetEmail);
-      setNotifications(data);
+      setSubscribed(true);
+      setMessage("Settings saved. Your news alerts are active.");
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -85,10 +107,8 @@ function App() {
     setMessage("");
     try {
       await unsubscribe(targetEmail);
-      setNewsCategories([]);
-      setNotifications([]);
-      await clearNotifications(targetEmail);
-      setMessage("You have been unsubscribed.");
+      setSubscribed(false);
+      setMessage("Alerts have been deactivated.");
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -99,7 +119,6 @@ function App() {
   const handleRefresh = async () => {
     if (!email) return;
     setLoading(true);
-    setNewsRefreshKey((current) => current + 1);
     try {
       const data = await getNotifications(email);
       setNotifications(data);
@@ -124,16 +143,28 @@ function App() {
   }
 
   const isSuccessMessage =
-    message.startsWith("Subscribed!") ||
-    message.startsWith("You have been unsubscribed.");
+    message.startsWith("Settings saved.") ||
+    message.startsWith("Alerts have been deactivated.");
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 antialiased">
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4">
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">
-            Real-Time News Alerts
-          </h1>
+    <div className="flex h-screen flex-col overflow-hidden bg-slate-50 text-slate-800 antialiased">
+      <header className="z-10 flex h-16 flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
+        <h1 className="text-xl font-bold tracking-tight text-slate-900">
+          AlertPulse Dashboard
+        </h1>
+        <div className="flex items-center gap-4">
+          {message && (
+            <p
+              role={isSuccessMessage ? "status" : "alert"}
+              className={`rounded-lg border px-4 py-2 text-sm shadow-sm ${
+                isSuccessMessage
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                  : "border-rose-200 bg-rose-50 text-rose-800"
+              }`}
+            >
+              {message}
+            </p>
+          )}
           <button
             onClick={handleLogout}
             className="text-sm font-medium text-slate-600 transition hover:text-slate-900"
@@ -143,31 +174,17 @@ function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl space-y-6 px-4 py-8">
-        {message && (
-          <div
-            role={isSuccessMessage ? "status" : "alert"}
-            className={`flex items-start rounded-xl border p-4 shadow-sm ${
-              isSuccessMessage
-                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                : "border-rose-200 bg-rose-50 text-rose-800"
-            }`}
-          >
-            <p className="text-sm font-medium">{message}</p>
-          </div>
-        )}
-
+      <main className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
         <Dashboard
           email={email}
-          setEmail={setEmail}
           categories={categories}
           setCategories={setCategories}
           frequency={frequency}
           setFrequency={setFrequency}
-          newsCategories={newsCategories}
-          newsRefreshKey={newsRefreshKey}
+          notifications={notifications}
+          subscribed={subscribed}
           onRefresh={handleRefresh}
-          onSubscribe={handleSubscribe}
+          onSavePreferences={handleSavePreferences}
           onUnsubscribe={handleUnsubscribe}
           loading={loading}
         />
