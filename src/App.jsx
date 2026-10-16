@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import SubscribeForm from "./components/SubscribeForm";
 import Dashboard from "./components/Dashboard";
 import ChangePasswordPage from "./components/ChangePasswordPage";
 import ForgotPasswordPage from "./components/ForgotPasswordPage";
@@ -124,44 +123,55 @@ function App() {
     return <LoginPage onLogin={handleLogin} />;
   }
 
+  const isSuccessMessage =
+    message.startsWith("Subscribed!") ||
+    message.startsWith("You have been unsubscribed.");
+
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <header className="max-w-xl mx-auto flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Real-Time News Alerts
-        </h1>
-        <button
-          onClick={handleLogout}
-          className="text-sm text-blue-600 hover:underline"
-        >
-          Log out
-        </button>
+    <div className="min-h-screen bg-slate-50 text-slate-800 antialiased">
+      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
+        <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4">
+          <h1 className="text-xl font-bold tracking-tight text-slate-900">
+            Real-Time News Alerts
+          </h1>
+          <button
+            onClick={handleLogout}
+            className="text-sm font-medium text-slate-600 transition hover:text-slate-900"
+          >
+            Log out
+          </button>
+        </div>
       </header>
 
-      {message && (
-        <p className="max-w-xl mx-auto text-center text-sm text-blue-700 mb-4">
-          {message}
-        </p>
-      )}
+      <main className="mx-auto max-w-4xl space-y-6 px-4 py-8">
+        {message && (
+          <div
+            role={isSuccessMessage ? "status" : "alert"}
+            className={`flex items-start rounded-xl border p-4 shadow-sm ${
+              isSuccessMessage
+                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                : "border-rose-200 bg-rose-50 text-rose-800"
+            }`}
+          >
+            <p className="text-sm font-medium">{message}</p>
+          </div>
+        )}
 
-      <SubscribeForm
-        email={email}
-        setEmail={setEmail}
-      />
-
-      <Dashboard
-        email={email}
-        categories={categories}
-        setCategories={setCategories}
-        frequency={frequency}
-        setFrequency={setFrequency}
-        newsCategories={newsCategories}
-        newsRefreshKey={newsRefreshKey}
-        onRefresh={handleRefresh}
-        onSubscribe={handleSubscribe}
-        onUnsubscribe={handleUnsubscribe}
-        loading={loading}
-      />
+        <Dashboard
+          email={email}
+          setEmail={setEmail}
+          categories={categories}
+          setCategories={setCategories}
+          frequency={frequency}
+          setFrequency={setFrequency}
+          newsCategories={newsCategories}
+          newsRefreshKey={newsRefreshKey}
+          onRefresh={handleRefresh}
+          onSubscribe={handleSubscribe}
+          onUnsubscribe={handleUnsubscribe}
+          loading={loading}
+        />
+      </main>
     </div>
   );
 }
