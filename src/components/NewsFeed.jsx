@@ -173,12 +173,12 @@ export default function NewsFeed({
       </section>
 
       {newsCategories.length > 0 && (
-        <section className="mx-auto max-w-2xl space-y-4 bg-slate-50 p-4">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-            <h2 className="text-xl font-extrabold tracking-tight text-slate-900">
-              Latest News Feed
+        <section className="mx-auto flex h-[70vh] min-h-[320px] max-h-[48rem] w-full max-w-2xl flex-col overflow-hidden bg-slate-50">
+          <div className="flex flex-shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50 p-4">
+            <h2 className="text-lg font-bold text-slate-900">
+              News Feed
             </h2>
-            <div className="flex items-center space-x-3 text-sm">
+            <div className="flex items-center space-x-2 text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => {
@@ -186,7 +186,7 @@ export default function NewsFeed({
                   onRefresh();
                 }}
                 disabled={actionLoading || loading}
-                className="font-semibold text-indigo-600 transition hover:text-indigo-800 disabled:opacity-50"
+                className="text-indigo-600 hover:text-indigo-800 disabled:opacity-50"
               >
                 Refresh
               </button>
@@ -198,73 +198,92 @@ export default function NewsFeed({
                   setFeedCleared(true);
                 }}
                 disabled={loading || feedCleared}
-                className="font-semibold text-rose-600 transition hover:text-rose-800 disabled:opacity-40"
+                className="text-rose-600 hover:text-rose-800 disabled:opacity-40"
               >
                 Clear All
               </button>
             </div>
           </div>
 
-          {!feedCleared && loading && (
-            <p className="text-sm text-slate-500">Loading news...</p>
-          )}
-          {!feedCleared && error && (
-            <p role="alert" className="text-sm text-rose-600">
-              {error}
-            </p>
-          )}
-          {!feedCleared && !loading && !error && articles.length === 0 && (
-            <p className="text-sm text-slate-500">No news found.</p>
-          )}
-          {!feedCleared && !loading && !error && articles.length > 0 && (
-            <div className="space-y-4">
-              {articles.map((article) => (
-                <article
-                  key={article._id || article.url}
-                  className="space-y-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md"
-                >
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center space-x-2">
-                      <span className="rounded-md bg-slate-100 px-2.5 py-1 font-bold uppercase tracking-wider text-slate-800">
-                        {article.source?.name || "Unknown source"}
-                      </span>
-                      {article.publishedAt && (
-                        <>
-                          <span className="text-slate-300">•</span>
-                          <time
-                            className="font-medium text-slate-500"
-                            dateTime={article.publishedAt}
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+            {!feedCleared && loading && (
+              <p className="text-sm text-slate-500">Loading news...</p>
+            )}
+            {!feedCleared && error && (
+              <p role="alert" className="text-sm text-rose-600">
+                {error}
+              </p>
+            )}
+            {!feedCleared && !loading && !error && articles.length === 0 && (
+              <p className="text-sm text-slate-500">No news found.</p>
+            )}
+            {!feedCleared && !loading && !error && articles.length > 0 && (
+              <div className="space-y-4">
+                {articles.map((article) => (
+                  <article
+                    key={article._id || article.url}
+                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+                  >
+                    <div className="flex flex-col-reverse gap-5 sm:flex-row">
+                      <div className="min-w-0 flex-1 space-y-3">
+                        <div className="flex items-center space-x-2 text-xs">
+                          <span className="rounded-md bg-slate-100 px-2.5 py-1 font-bold uppercase text-slate-800">
+                            {article.source?.name || "Unknown source"}
+                          </span>
+                          {article.publishedAt && (
+                            <>
+                              <span className="text-slate-300">•</span>
+                              <time
+                                className="text-slate-500"
+                                dateTime={article.publishedAt}
+                              >
+                                {new Date(
+                                  article.publishedAt,
+                                ).toLocaleDateString()}
+                              </time>
+                            </>
+                          )}
+                          {article.category && (
+                            <>
+                              <span className="text-slate-300">•</span>
+                              <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-indigo-700">
+                                {article.category}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900">
+                          <a
+                            href={article.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="hover:text-indigo-600 hover:underline"
                           >
-                            {new Date(article.publishedAt).toLocaleString()}
-                          </time>
-                        </>
-                      )}
+                            {article.title}
+                          </a>
+                        </h3>
+                        {article.description && (
+                          <p className="line-clamp-2 text-sm text-slate-600">
+                            {article.description}
+                          </p>
+                        )}
+                      </div>
+                      <div className="h-24 w-full shrink-0 rounded-lg bg-slate-100 sm:w-32">
+                        {article.imageUrl && (
+                          <img
+                            src={article.imageUrl}
+                            alt=""
+                            loading="lazy"
+                            className="h-full w-full object-cover object-center"
+                          />
+                        )}
+                      </div>
                     </div>
-                    {article.category && (
-                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-indigo-700">
-                        {article.category}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="text-lg font-bold leading-snug text-slate-900">
-                    <a
-                      href={article.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="transition-colors duration-150 hover:text-indigo-600 hover:underline"
-                    >
-                      {article.title}
-                    </a>
-                  </h3>
-                  {article.description && (
-                    <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">
-                      {article.description}
-                    </p>
-                  )}
-                </article>
-              ))}
-            </div>
-          )}
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
         </section>
       )}
     </div>
