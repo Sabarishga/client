@@ -164,9 +164,9 @@ export default function NewsFeed({
               type="button"
               onClick={() => onUnsubscribe(email)}
               disabled={actionLoading || !email}
-              className="w-full rounded-lg px-4 py-2 text-center text-sm font-medium text-rose-600 transition hover:bg-rose-50 hover:text-rose-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+              className="w-full rounded-lg bg-rose-600 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 active:bg-rose-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
-              Unsubscribe from all alerts
+              Opt-out from Alerts
             </button>
           </div>
         </div>
@@ -186,7 +186,7 @@ export default function NewsFeed({
                   onRefresh();
                 }}
                 disabled={actionLoading || loading}
-                className="text-indigo-600 hover:text-indigo-800 disabled:opacity-50"
+                className="rounded-full px-3 py-1 text-indigo-600 transition hover:bg-indigo-50 hover:text-blue-700 disabled:opacity-50"
               >
                 Refresh
               </button>
@@ -198,7 +198,7 @@ export default function NewsFeed({
                   setFeedCleared(true);
                 }}
                 disabled={loading || feedCleared}
-                className="text-rose-600 hover:text-rose-800 disabled:opacity-40"
+                className="rounded-full px-3 py-1 text-rose-600 transition hover:bg-rose-50 hover:text-red-700 disabled:opacity-40"
               >
                 Clear All
               </button>
