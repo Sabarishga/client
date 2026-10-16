@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getNews } from "../api";
 import { NEWS_CATEGORIES } from "../categories";
 import SubscribeForm from "./SubscribeForm";
@@ -18,13 +18,17 @@ export default function NewsFeed({
   actionLoading,
 }) {
   const [articles, setArticles] = useState([]);
+  const [visibleArticleCount, setVisibleArticleCount] = useState(10);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [feedCleared, setFeedCleared] = useState(false);
+  const loadMoreRef = useRef(null);
+  const hasMoreArticles = visibleArticleCount < articles.length;
 
   useEffect(() => {
     if (newsCategories.length === 0 || feedCleared) {
       setArticles([]);
+      setVisibleArticleCount(10);
       setError("");
       setLoading(false);
       return undefined;
@@ -48,7 +52,10 @@ export default function NewsFeed({
         );
       })
       .then((data) => {
-        if (active) setArticles(data);
+        if (active) {
+          setArticles(data);
+          setVisibleArticleCount(10);
+        }
       })
       .catch((err) => {
         if (active) setError(err.message);
@@ -61,6 +68,33 @@ export default function NewsFeed({
       active = false;
     };
   }, [newsCategories, newsRefreshKey, feedCleared]);
+
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (
+      !target ||
+      !hasMoreArticles ||
+      loading ||
+      feedCleared ||
+      typeof IntersectionObserver === "undefined"
+    ) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisibleArticleCount((current) =>
+            Math.min(current + 10, articles.length),
+          );
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    observer.observe(target);
+
+    return () => observer.disconnect();
+  }, [articles.length, feedCleared, hasMoreArticles, loading]);
 
   const toggleCategory = (category) => {
     if (categories.includes(category)) {
@@ -195,6 +229,7 @@ export default function NewsFeed({
                 type="button"
                 onClick={() => {
                   setArticles([]);
+                  setVisibleArticleCount(10);
                   setFeedCleared(true);
                 }}
                 disabled={loading || feedCleared}
@@ -218,51 +253,104 @@ export default function NewsFeed({
           )}
           {!feedCleared && !loading && !error && articles.length > 0 && (
             <div className="space-y-4">
-              {articles.map((article) => (
+              {articles.slice(0, visibleArticleCount).map((article) => (
                 <article
                   key={article._id || article.url}
-                  className="space-y-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md"
+                  className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md"
                 >
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center space-x-2">
-                      <span className="rounded-md bg-slate-100 px-2.5 py-1 font-bold uppercase tracking-wider text-slate-800">
-                        {article.source?.name || "Unknown source"}
-                      </span>
-                      {article.publishedAt && (
-                        <>
-                          <span className="text-slate-300">•</span>
-                          <time
-                            className="font-medium text-slate-500"
-                            dateTime={article.publishedAt}
-                          >
-                            {new Date(article.publishedAt).toLocaleString()}
-                          </time>
-                        </>
+                  <div className="flex flex-col-reverse gap-5 sm:flex-row">
+                    <div className="min-w-0 flex-1 space-y-3">
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                        <span className="rounded-md bg-slate-100 px-2.5 py-1 font-bold uppercase tracking-wider text-slate-800">
+                          {article.source?.name || "Unknown source"}
+                        </span>
+                        {article.publishedAt && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <time
+                              className="font-medium text-slate-500"
+                              dateTime={article.publishedAt}
+                            >
+                              {new Date(
+                                article.publishedAt,
+                              ).toLocaleDateString()}
+                            </time>
+                          </>
+                        )}
+                        {article.category && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-indigo-700">
+                              {article.category}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      <h3 className="text-lg font-bold leading-snug text-slate-900">
+                        <a
+                          href={article.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="transition-colors duration-150 hover:text-indigo-600 hover:underline"
+                        >
+                          {article.title}
+                        </a>
+                      </h3>
+                      {article.description && (
+                        <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">
+                          {article.description}
+                        </p>
                       )}
                     </div>
-                    {article.category && (
-                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-indigo-700">
-                        {article.category}
-                      </span>
-                    )}
+                    <div className="h-32 w-full shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-slate-100 sm:h-24 sm:w-32 md:h-24 md:w-36">
+                      {article.imageUrl && (
+                        <img
+                          src={article.imageUrl}
+                          alt=""
+                          loading="lazy"
+                          className="h-full w-full object-cover object-center transition duration-300 hover:scale-105"
+                        />
+                      )}
+                    </div>
                   </div>
-                  <h3 className="text-lg font-bold leading-snug text-slate-900">
-                    <a
-                      href={article.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="transition-colors duration-150 hover:text-indigo-600 hover:underline"
-                    >
-                      {article.title}
-                    </a>
-                  </h3>
-                  {article.description && (
-                    <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">
-                      {article.description}
-                    </p>
-                  )}
                 </article>
               ))}
+            </div>
+          )}
+          {!feedCleared && !loading && !error && articles.length > 0 && (
+            <div
+              ref={loadMoreRef}
+              className="flex flex-col items-center justify-center space-y-2 border-t border-slate-100 pb-4 pt-6"
+              aria-live="polite"
+            >
+              {hasMoreArticles ? (
+                <>
+                  <div
+                    aria-hidden="true"
+                    className="h-7 w-7 animate-spin rounded-full border-[3px] border-indigo-600/20 border-t-indigo-600"
+                  />
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Loading older updates...
+                  </span>
+                  {typeof IntersectionObserver === "undefined" && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setVisibleArticleCount((current) =>
+                          Math.min(current + 10, articles.length),
+                        )
+                      }
+                      className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                    >
+                      Load more
+                    </button>
+                  )}
+                </>
+              ) : (
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  You’re all caught up.
+                </span>
+              )}
             </div>
           )}
         </section>
