@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:wght@500;600&display=swap");
+@import "tailwindcss";
+
+/* Design tokens: brand colours and fonts used across the app (e.g. bg-brand, font-serif). */
+@theme {
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-serif: "Newsreader", Georgia, serif;
+
+  --color-brand: #4f3cf5;
+  --color-brand-dark: #3b2bd0;
+  --color-brand-soft: #eae7ff;
+  --color-brand-ink: #2e21b8;
+  --color-page: #f6f7f9;
+}
+
+@layer base {
+  /* Tailwind v4 resets buttons to the default cursor; restore the pointer on enabled ones. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
