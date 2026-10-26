@@ -8,8 +8,6 @@ export const NEWS_CATEGORIES = [
   "technology",
 ];
 
-// Tailwind classes for each category's tag and thumbnail tint.
-// The class names are written out in full so Tailwind can find them at build time.
 export const CATEGORY_STYLES = {
   general: "bg-slate-100 text-slate-700",
   business: "bg-emerald-100 text-emerald-800",

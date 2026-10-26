@@ -33,13 +33,10 @@ export default function NotificationHistoryDrawer({ email, onClose }) {
     totalPages: 0,
   });
   const [summary, setSummary] = useState(null);
-  // When the dashboard endpoint can't be reached, the history is loaded from the
-  // original /notifications/:email route instead and filtered in the browser.
   const [fallbackItems, setFallbackItems] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Close on Escape, lock background scrolling and focus the close button.
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") onClose();
@@ -63,14 +60,13 @@ export default function NotificationHistoryDrawer({ email, onClose }) {
         if (active) setSummary(data);
       })
       .catch(() => {
-        // Counts are optional; the list below reports real errors.
       });
     return () => {
       active = false;
     };
   }, [email]);
 
-  // History list, re-fetched whenever a filter, the sort order or the page changes.
+  // History list, re-fetched whenever a filter the sort order or the page changes.
   useEffect(() => {
     if (fallbackItems) {
       setLoading(false);
@@ -134,7 +130,7 @@ export default function NotificationHistoryDrawer({ email, onClose }) {
 
   const filtering = selectedCategories.length > 0;
 
-  // What the panel displays: server results, or the browser-filtered fallback.
+  //  server results, or the browser-filtered fallback.
   let shownNotifications = notifications;
   let shownPagination = pagination;
   let chipTotal = summary?.total ?? 0;
@@ -209,7 +205,6 @@ export default function NotificationHistoryDrawer({ email, onClose }) {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 px-5 pt-5 sm:px-6">
-          {/* Filters stay in place; only the list below scrolls. */}
           <div className="shrink-0 space-y-4 rounded-2xl border border-gray-200 bg-white p-4 sm:p-5">
             <div className="space-y-2">
               <span className="text-[13px] font-semibold text-gray-700">
@@ -288,7 +283,6 @@ export default function NotificationHistoryDrawer({ email, onClose }) {
             )}
           </div>
 
-          {/* Only this list scrolls */}
           <div
             role="region"
             aria-label="Notification history"
@@ -317,7 +311,6 @@ export default function NotificationHistoryDrawer({ email, onClose }) {
                   key={item._id}
                   className="flex items-start gap-3 rounded-2xl border border-gray-200 bg-white p-3 sm:gap-4 sm:p-4"
                 >
-                  {/* Small thumbnail: the article image when the API provides one, otherwise a tinted placeholder */}
                   <div
                     className={`flex h-18 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[10px] ${categoryStyle(
                       item.category,

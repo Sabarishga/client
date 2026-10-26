@@ -84,7 +84,7 @@ export default function NewsFeed({
       <section
         className={`flex min-w-0 flex-col gap-5 rounded-2xl border border-gray-200 bg-white p-6 ${
           newsCategories.length > 0
-            ? "lg:max-h-full lg:w-[340px] lg:flex-none lg:self-start lg:overflow-y-auto"
+            ? "lg:max-h-full lg:w-85 lg:flex-none lg:self-start lg:overflow-y-auto"
             : "mx-auto w-full max-w-md"
         }`}
       >
@@ -98,7 +98,7 @@ export default function NewsFeed({
             type="button"
             onClick={() => setHistoryOpen(true)}
             disabled={!email.trim()}
-            className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[10px] border border-gray-300 bg-violet-50 px-4 text-sm font-semibold text-brand-ink transition hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] border border-gray-300 bg-violet-50 px-4 text-sm font-semibold text-brand-ink transition hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             <svg
               className="h-4 w-4"
@@ -141,7 +141,7 @@ export default function NewsFeed({
                   key={option.value}
                   onClick={() => setFrequency(option.value)}
                   aria-pressed={selected}
-                  className={`min-h-[44px] rounded-[9px] px-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+                  className={`min-h-11 rounded-[9px] px-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                     selected
                       ? "bg-white text-brand-ink shadow-sm ring-1 ring-brand"
                       : "text-gray-700 hover:bg-white/70"
@@ -171,7 +171,7 @@ export default function NewsFeed({
                   key={newsCategory}
                   onClick={() => toggleCategory(newsCategory)}
                   aria-pressed={selected}
-                  className={`flex min-h-[44px] items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium capitalize transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+                  className={`flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium capitalize transition focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-brand ${
                     selected
                       ? "border-brand bg-brand-soft text-brand-ink"
                       : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"

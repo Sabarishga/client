@@ -50,7 +50,6 @@ function App() {
   };
 
   const handleLogout = async () => {
-    // Tell the server first, so alert emails stop for this user.
     try {
       await logout(email);
     } catch (err) {
@@ -135,7 +134,6 @@ function App() {
     message.startsWith("You have been unsubscribed.");
 
   return (
-    // On large screens the page itself does not scroll; only the lists inside it do.
     <div className="flex min-h-screen flex-col bg-page font-sans text-slate-900 antialiased lg:h-screen lg:overflow-hidden">
       <header className="shrink-0 border-b border-gray-200 bg-white">
         <div className="mx-auto flex min-h-16 w-full max-w-280 flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-8">

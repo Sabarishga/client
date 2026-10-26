@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:wght@500;600&display=swap");
 @import "tailwindcss";
 
-/* Design tokens: brand colours and fonts used across the app (e.g. bg-brand, font-serif). */
 @theme {
   --font-sans: "DM Sans", system-ui, sans-serif;
   --font-serif: "Newsreader", Georgia, serif;
@@ -14,7 +13,6 @@
 }
 
 @layer base {
-  /* Tailwind v4 resets buttons to the default cursor; restore the pointer on enabled ones. */
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]) {
     cursor: pointer;
