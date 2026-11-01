@@ -8,7 +8,7 @@ you will receive Email Notification within 5 min in your inbox. If not Do please
 
 your Email notification history will be saved in the Dashboard.
 
-                         |Demo credentials| 
+                         **Demo credentials**
 
-EMAIL_USER       = *onbiss799@gmail.com*
-EMAIL_Password   = *RohithCena*
+    EMAIL_USER       =  onbiss799@gmail.com 
+    EMAIL_Password   =  RohithCena 
