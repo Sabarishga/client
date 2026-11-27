@@ -40,7 +40,6 @@ function PlaceholderIcon({ className = "h-8 w-8" }) {
   );
 }
 
-/** Shows the article image, or a tidy placeholder if there is none or it fails to load. */
 export function ArticleImage({ src, category, className = "" }) {
   const [failed, setFailed] = useState(false);
   const showImage = src && !failed && safeHref(src);

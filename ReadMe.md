@@ -1,6 +1,6 @@
 # Real-Time News Alerts: Frontend
 
-React 19 + Vite + React Router + Tailwind CSS client for the Real-Time News Alerts API.
+React + Vite + React Router + Tailwind CSS client for the Real-Time News Alerts API.
 The full documentation (features, API, deployment) is in the backend repository's README.
 
 ## Run locally

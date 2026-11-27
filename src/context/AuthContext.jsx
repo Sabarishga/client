@@ -9,13 +9,6 @@ import {
 import { authApi } from "../api";
 import { onUnauthorized, tokenStore } from "../api/client";
 
-/**
- * Holds the logged-in user (including their saved alert preferences) for the
- * whole app. Pages read it with useAuth() instead of passing props around.
- *
- * status: "loading" while the saved token is checked on startup,
- *         "authenticated" or "guest" after that.
- */
 
 const AuthContext = createContext(null);
 
@@ -94,7 +87,7 @@ export function AuthProvider({ children }) {
     try {
       await authApi.logout();
     } catch {
-      /* the token is discarded either way */
+
     }
     endSession();
   }, [endSession]);

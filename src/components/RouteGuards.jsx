@@ -10,7 +10,6 @@ export function PageLoader({ label = "Loading..." }) {
   );
 }
 
-/** Only logged-in users get through; everyone else goes to /login and comes back afterwards. */
 export function ProtectedRoute() {
   const { status } = useAuth();
   const location = useLocation();
@@ -22,7 +21,6 @@ export function ProtectedRoute() {
   return <Outlet />;
 }
 
-/** Login/register pages: logged-in users are sent straight to their feed. */
 export function GuestRoute() {
   const { status } = useAuth();
   if (status === "loading") return <PageLoader />;

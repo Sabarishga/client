@@ -1,13 +1,5 @@
 import axios from "axios";
 
-/**
- * One configured HTTP client for the whole app.
- * - Adds the JWT to every request.
- * - Returns `response.data` directly.
- * - Turns every failure into an ApiError with a message that is safe to show.
- * - Tells the AuthContext when the server rejects the session (401).
- */
-
 const TOKEN_KEY = "rtn_token";
 
 export const tokenStore = {
@@ -22,15 +14,15 @@ export const tokenStore = {
     try {
       window.localStorage.setItem(TOKEN_KEY, token);
     } catch {
-      /* storage unavailable (private mode): the session lasts for this tab only */
+
     }
   },
   clear() {
     try {
       window.localStorage.removeItem(TOKEN_KEY);
-      window.localStorage.removeItem("newsAlertEmail"); // left over from the old version
+      window.localStorage.removeItem("newsAlertEmail");
     } catch {
-      /* ignore */
+
     }
   },
 };
@@ -40,7 +32,7 @@ export class ApiError extends Error {
     super(message);
     this.name = "ApiError";
     this.status = status;
-    this.errors = errors; // per-field messages from the API, e.g. { email: "..." }
+    this.errors = errors;
     this.data = data;
   }
 }
@@ -56,7 +48,6 @@ export const http = axios.create({
 });
 
 let unauthorizedHandler = null;
-/** AuthContext registers a callback that logs the user out on 401. */
 export const onUnauthorized = (handler) => {
   unauthorizedHandler = handler;
 };

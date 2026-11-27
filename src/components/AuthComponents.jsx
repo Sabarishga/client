@@ -10,7 +10,6 @@ export const secondaryButtonClass =
 export const linkButtonClass =
   "text-sm font-medium text-brand transition hover:underline disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand";
 
-/** Centered card used by login, register and password pages. */
 export function AuthCard({ title, subtitle, children }) {
   return (
     <main className="min-h-screen bg-page px-4 py-10 font-sans text-slate-900 antialiased">
@@ -29,7 +28,6 @@ export function AuthCard({ title, subtitle, children }) {
   );
 }
 
-/** Label + input + per-field error message from the API. */
 export function Field({ id, label, error, hint, ...inputProps }) {
   const describedBy = [error && `${id}-error`, hint && `${id}-hint`].filter(Boolean).join(" ");
   return (
@@ -78,7 +76,6 @@ export function FormSuccess({ children }) {
 
 export const PASSWORD_HINT = "At least 8 characters, with a letter and a number.";
 
-/** Mirrors the backend rules so most mistakes are caught before submitting. */
 export const checkPassword = (password) => {
   if (password.length < 8) return "Password must be at least 8 characters";
   if (new TextEncoder().encode(password).length > 72) return "Password must be at most 72 bytes long";

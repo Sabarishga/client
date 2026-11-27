@@ -4,16 +4,10 @@ import { isAbort } from "../api/client";
 
 export const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
-/**
- * Loads the news for some categories and keeps it fresh on its own:
- * it reloads every 5 minutes while the tab is visible, and right away when
- * the user comes back to a tab whose data is older than that.
- * Stories that appear during an automatic refresh are marked as new.
- */
 export default function useNewsFeed(categories) {
   const key = categories.join(",");
   const [articles, setArticles] = useState([]);
-  const [status, setStatus] = useState("idle"); // idle | loading | ready | error
+  const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
   const [stale, setStale] = useState(false);
   const [updatedAt, setUpdatedAt] = useState(null);
@@ -57,7 +51,6 @@ export default function useNewsFeed(categories) {
     [key],
   );
 
-  // Manual refresh: shows a spinner and says whether anything new arrived.
   const noteTimer = useRef(null);
   const refresh = useCallback(async () => {
     window.clearTimeout(noteTimer.current);

@@ -1,7 +1,5 @@
 import { http } from "./client";
 
-/** Every backend endpoint the app uses, in one place. */
-
 export const authApi = {
   register: (name, email, password) =>
     http.post("/auth/register", { name, email, password }),

@@ -13,12 +13,6 @@ export async function requestBrowserPermission() {
   return Notification.requestPermission();
 }
 
-/**
- * Browser ("push") alerts. While the app is open, checks once a minute for
- * alerts the server has just delivered to this user and shows each one as
- * a desktop notification. Runs only when the user turned on browser alerts
- * and allowed notifications.
- */
 export default function useBrowserAlerts(user, onNewAlerts) {
   const enabled = Boolean(
     user?.preferences?.subscribed && user?.preferences?.channels?.browser,
@@ -61,7 +55,7 @@ export default function useBrowserAlerts(user, onNewAlerts) {
         }
         callback.current?.(notifications);
       } catch {
-        /* network blips are fine: the next check catches up */
+
       }
     };
 

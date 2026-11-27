@@ -5,7 +5,6 @@ import ArticleCard from "./ArticleCard";
 const formatTime = (date) =>
   date?.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 
-/** Live feed for the user's saved topics, refreshed automatically. */
 export default function NewsFeed({ categories }) {
   const feed = useNewsFeed(categories);
   const [filter, setFilter] = useState("all");

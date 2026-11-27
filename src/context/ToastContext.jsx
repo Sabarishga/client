@@ -1,7 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
-/** App-wide success / error messages that stay visible across page changes. */
-
 const ToastContext = createContext(null);
 let nextId = 1;
 
