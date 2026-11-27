@@ -1,14 +1,24 @@
-Start the app, open register, and register with these credentials first then log in at login.
+# Real-Time News Alerts: Frontend
 
-The login screen is the first page. After logging in, users can browse the latest
-news by category (General shows all categories), manage their news alert preferences,
-and view recent notifications from the home screen.
+React 19 + Vite + React Router + Tailwind CSS client for the Real-Time News Alerts API.
+The full documentation (features, API, deployment) is in the backend repository's README.
 
-you will receive Email Notification within 5 min in your inbox. If not Do please Check your Spam folder.
+## Run locally
 
-your Email notification history will be saved in the Dashboard.
+```bash
+npm install
+cp .env.example .env
+npm run dev
+```
 
-                         **Demo credentials**
+With `VITE_API_URL` empty, Vite proxies `/api` to the backend on `http://localhost:5000`.
+For production builds, set `VITE_API_URL` to the backend URL including `/api`.
 
-    EMAIL_USER       =  onbiss799@gmail.com 
-    EMAIL_Password   =  RohithCena 
+## Try it
+
+1. Open the site and press **Create your free account**. Use your own real email address so you can see the alert emails.
+2. Pick your topics, choose a frequency and how you want alerts (email and/or browser), then press **Save preferences**.
+3. Press **Send me a test alert now** to receive an email right away (check spam if needed).
+4. Open **Dashboard** to see every alert you have received.
+
+There are no shared demo credentials: each tester creates their own account.
